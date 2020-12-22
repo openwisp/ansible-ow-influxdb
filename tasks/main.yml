@@ -1,0 +1,55 @@
+---
+
+- name: Install influxdb (update apt cache first)
+  apt:
+    name: gpg
+    update_cache: yes
+    state: latest
+  tags: [influxdb]
+
+- name: Add influxdb key
+  apt_key:
+    url: https://repos.influxdata.com/influxdb.key
+    state: present
+  tags: [influxdb]
+
+- name: Add influxdb repo
+  apt_repository:
+    repo: "deb https://repos.influxdata.com/{{ ansible_distribution.lower() }}/ {{ ansible_distribution_release  }} stable"
+    state: present
+  tags: [influxdb]
+
+- name: Install influxdb (update apt cache first)
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - influxdb
+  notify: restart influxdb
+  tags: [influxdb]
+
+- name: Set influxdb HTTP ip and port
+  lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    regexp: '^  # bind-address = ":8086"'
+    line: '  bind-address = "{{ influxdb_http_ip }}:{{ influxdb_http_port }}"'
+    backrefs: true
+  notify: restart influxdb
+  tags: [influxdb]
+
+- name: Ensure influxdb admin user is present
+  shell:
+    cmd: |
+      echo "CREATE USER admin WITH password '{{ inflxudb_admin_password }}' WITH ALL PRIVILEGES;" \
+           | influx -host {{ influxdb_http_ip }} \
+           && touch /etc/influxdb/.admin_created
+    creates: /etc/influxdb/.admin_created
+  register: influxdb_admin_created
+  tags: [influxdb]
+
+- name: ensure influxdb is started and enabled
+  service:
+    name: influxdb
+    state: started
+    enabled: yes
+  tags: [influxdb]

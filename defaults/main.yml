@@ -1,0 +1,4 @@
+---
+
+influxdb_http_ip: ""
+influxdb_http_port: 8086
