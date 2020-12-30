@@ -3,7 +3,7 @@
 - name: Install influxdb (update apt cache first)
   apt:
     name: gpg
-    update_cache: yes
+    cache_valid_time: 3000
     state: latest
   tags: [influxdb]
 
