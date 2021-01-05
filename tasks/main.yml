@@ -21,10 +21,8 @@
 
 - name: Install influxdb (update apt cache first)
   apt:
-    name: "{{ item }}"
+    name: influxdb
     state: latest
-  with_items:
-    - influxdb
   notify: restart influxdb
   tags: [influxdb]
 
@@ -34,7 +32,24 @@
     regexp: '^  # bind-address = ":8086"'
     line: '  bind-address = "{{ influxdb_http_ip }}:{{ influxdb_http_port }}"'
     backrefs: true
+  when: influxdb_http_ip != 'localhost' and influxdb_http_port != 8086
   notify: restart influxdb
+  tags: [influxdb]
+
+- name: Set influxdb dir permissions
+  file:
+    path: /var/lib/influxdb
+    state: directory
+    owner: influxdb
+    group: influxdb
+    recurse: true
+  tags: [influxdb]
+
+- name: ensure influxdb is started and enabled
+  service:
+    name: influxdb
+    state: started
+    enabled: yes
   tags: [influxdb]
 
 - name: Ensure influxdb admin user is present
@@ -44,12 +59,6 @@
            | influx -host {{ influxdb_http_ip }} \
            && touch /etc/influxdb/.admin_created
     creates: /etc/influxdb/.admin_created
+  when: inflxudb_admin_password is defined
   register: influxdb_admin_created
-  tags: [influxdb]
-
-- name: ensure influxdb is started and enabled
-  service:
-    name: influxdb
-    state: started
-    enabled: yes
-  tags: [influxdb]
+  tags: [influxdb, tmp]

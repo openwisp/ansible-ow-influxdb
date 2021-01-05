@@ -1,4 +1,4 @@
 ---
 
-influxdb_http_ip: ""
+influxdb_http_ip: "localhost"
 influxdb_http_port: 8086
