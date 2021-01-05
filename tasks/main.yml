@@ -26,13 +26,13 @@
   notify: restart influxdb
   tags: [influxdb]
 
-- name: Set influxdb HTTP ip and port
+- name: Set influxdb HTTP IP and port
   lineinfile:
     path: /etc/influxdb/influxdb.conf
     regexp: '^  # bind-address = ":8086"'
     line: '  bind-address = "{{ influxdb_http_ip }}:{{ influxdb_http_port }}"'
     backrefs: true
-  when: influxdb_http_ip != 'localhost' and influxdb_http_port != 8086
+  when: influxdb_http_ip != 'localhost' or influxdb_http_port != 8086
   notify: restart influxdb
   tags: [influxdb]
 
