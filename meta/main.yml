@@ -1,0 +1,17 @@
+---
+
+dependencies: []
+
+galaxy_info:
+  author: Purhan
+  company: OpenWISP
+  description: Simple ansible role for installing and configuring influxdb.
+  license:
+  min_ansible_version: 2.7
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags:
+    - system
+    - networking

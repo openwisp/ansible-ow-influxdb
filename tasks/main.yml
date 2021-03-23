@@ -1,8 +1,15 @@
 ---
 
-- name: Install influxdb (update apt cache first)
+- name: Install gpg (update apt cache first)
   apt:
     name: gpg
+    cache_valid_time: 3000
+    state: latest
+  tags: [influxdb]
+
+- name: Install gpg-agent (update apt cache first)
+  apt:
+    name: gpg-agent
     cache_valid_time: 3000
     state: latest
   tags: [influxdb]
