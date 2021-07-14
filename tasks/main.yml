@@ -14,6 +14,13 @@
     state: latest
   tags: [influxdb]
 
+- name: Install logrotate
+  apt:
+    name: logrotate
+    cache_valid_time: 3000
+    state: latest
+  tags: [influxdb]
+
 - name: Add influxdb key
   apt_key:
     url: https://repos.influxdata.com/influxdb.key
@@ -41,6 +48,50 @@
     backrefs: true
   when: influxdb_http_ip != 'localhost' or influxdb_http_port != 8086
   notify: restart influxdb
+  tags: [influxdb]
+
+- name: Disable HTTP query logging for influxdb
+  block:
+    - lineinfile:
+        path: /etc/influxdb/influxdb.conf
+        line: '  log-enabled = false'
+        insertafter: '\[http\]'
+        state: present
+    - lineinfile:
+        path: /etc/influxdb/influxdb.conf
+        line: '  query-log-enabled = false'
+        insertafter: '\[data\]'
+        state: present
+  when: influxdb_query_logging is false
+  tags: [influxdb]
+
+- name: Enable HTTP query logging for influxdb
+  block:
+    - lineinfile:
+        path: /etc/influxdb/influxdb.conf
+        line: '  log-enabled = false'
+        insertafter: '\[http\]'
+        state: absent
+    - lineinfile:
+        path: /etc/influxdb/influxdb.conf
+        line: '  query-log-enabled = false'
+        insertafter: '\[data\]'
+        state: absent
+  when: influxdb_query_logging is true
+  tags: [influxdb]
+
+- name: Set maxsize of rsyslog logrotate configuration
+  block:
+    - lineinfile:
+        path: /etc/logrotate.d/rsyslog
+        firstmatch: false
+        line: '        maxsize 65M'
+        insertafter: '\{'
+    - lineinfile:
+        path: /etc/logrotate.d/rsyslog
+        firstmatch: true
+        line: '        maxsize 65M'
+        insertafter: '\{'
   tags: [influxdb]
 
 - name: Set influxdb dir permissions
