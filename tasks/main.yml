@@ -21,6 +21,15 @@
     state: latest
   tags: [influxdb]
 
+- name: Install system dependencies
+  apt:
+    name:
+      - curl
+      - rsyslog
+    cache_valid_time: 3000
+    state: latest
+  tags: [influxdb]
+
 - name: Add influxdb key
   apt_key:
     url: https://repos.influxdata.com/influxdb.key
