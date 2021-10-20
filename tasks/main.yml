@@ -128,4 +128,4 @@
     creates: /etc/influxdb/.admin_created
   when: inflxudb_admin_password is defined
   register: influxdb_admin_created
-  tags: [influxdb, tmp]
+  tags: [influxdb]
