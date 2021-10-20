@@ -71,7 +71,7 @@
         line: '  query-log-enabled = false'
         insertafter: '\[data\]'
         state: present
-  when: influxdb_query_logging is false
+  when: not influxdb_query_logging
   tags: [influxdb]
 
 - name: Enable HTTP query logging for influxdb
@@ -86,7 +86,7 @@
         line: '  query-log-enabled = false'
         insertafter: '\[data\]'
         state: absent
-  when: influxdb_query_logging is true
+  when: influxdb_query_logging
   tags: [influxdb]
 
 - name: Set maxsize of rsyslog logrotate configuration
