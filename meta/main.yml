@@ -3,7 +3,7 @@
 dependencies: []
 
 galaxy_info:
-  author: Purhan
+  author: openwisp
   company: OpenWISP
   description: Simple ansible role for installing and configuring influxdb.
   license:
