@@ -129,3 +129,12 @@
   when: inflxudb_admin_password is defined
   register: influxdb_admin_created
   tags: [influxdb]
+
+- name: Enable authentication
+  lineinfile:
+    path: "/etc/influxdb/influxdb.conf"
+    line: "  auth-enabled = true"
+    insertafter: "  # Determines whether user authentication is enabled over HTTP/HTTPS."
+  when: inflxudb_admin_password is defined
+  tags: [influxdb]
+  notify: restart influxdb
