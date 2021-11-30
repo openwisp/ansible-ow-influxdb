@@ -37,6 +37,7 @@
       echo "SET PASSWORD FOR {{ influxdb_user_username }} = '{{ influxdb_user_password }}'" \
         | influx -host {{ influxdb_http_ip }}
   when: influxdb_user_password
+  changed_when: false
   notify: restart influxdb
 
 - name: Enable influxdb authentication
