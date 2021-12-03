@@ -119,22 +119,5 @@
     enabled: yes
   tags: [influxdb]
 
-- name: Ensure influxdb admin user is present
-  shell:
-    cmd: |
-      echo "CREATE USER admin WITH password '{{ inflxudb_admin_password }}' WITH ALL PRIVILEGES;" \
-           | influx -host {{ influxdb_http_ip }} \
-           && touch /etc/influxdb/.admin_created
-    creates: /etc/influxdb/.admin_created
-  when: inflxudb_admin_password is defined
-  register: influxdb_admin_created
+- import_tasks: authentication.yml
   tags: [influxdb]
-
-- name: Enable authentication
-  lineinfile:
-    path: "/etc/influxdb/influxdb.conf"
-    line: "  auth-enabled = true"
-    insertafter: "  # Determines whether user authentication is enabled over HTTP/HTTPS."
-  when: inflxudb_admin_password is defined
-  tags: [influxdb]
-  notify: restart influxdb

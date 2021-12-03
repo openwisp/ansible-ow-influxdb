@@ -1,0 +1,52 @@
+# Disabling authentication is required for updating user password
+- name: Disable influxdb authentication
+  lineinfile:
+    path: "/etc/influxdb/influxdb.conf"
+    line: "  auth-enabled = true"
+    insertafter: |
+      "  # Determines whether user authentication is enabled over HTTP/HTTPS."
+    state: absent
+  register: disable_influxdb_auth
+  changed_when: not influxdb_user_password
+  notify: restart influxdb
+
+- name: Restart influxdb
+  service:
+    name: influxdb
+    state: restarted
+  when: influxdb_user_password
+  changed_when: false
+
+- name: Wait for influxdb to restart
+  pause: seconds=3
+  when: influxdb_user_password
+
+- name: Create influxdb user
+  shell:
+    cmd: |
+      echo "CREATE USER {{ influxdb_user_username }} WITH password '{{ influxdb_user_password }}' WITH ALL PRIVILEGES;" \
+          | influx -host {{ influxdb_http_ip }} \
+          && touch /etc/influxdb/.admin_created
+    creates: /etc/influxdb/.admin_created
+  when: influxdb_user_password
+  notify: restart influxdb
+
+- name: Update user password
+  shell:
+    cmd: |
+      echo "SET PASSWORD FOR {{ influxdb_user_username }} = '{{ influxdb_user_password }}'" \
+        | influx -host {{ influxdb_http_ip }}
+  when: influxdb_user_password
+  changed_when: false
+  notify: restart influxdb
+
+- name: Enable influxdb authentication
+  lineinfile:
+    path: "/etc/influxdb/influxdb.conf"
+    line: "  auth-enabled = true"
+    insertafter: "  # Determines whether user authentication is enabled over HTTP/HTTPS."
+    state: present
+  when: influxdb_user_password
+  register: enable_influxdb_auth
+  changed_when: |
+    "changed" in enable_influxdb_auth and "changed" not in disable_influxdb_auth
