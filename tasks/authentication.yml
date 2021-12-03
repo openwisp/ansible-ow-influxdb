@@ -1,4 +1,4 @@
-# Disabling authentication is also required for updating user password
+# Disabling authentication is required for updating user password
 - name: Disable influxdb authentication
   lineinfile:
     path: "/etc/influxdb/influxdb.conf"
