@@ -7,7 +7,7 @@
       "  # Determines whether user authentication is enabled over HTTP/HTTPS."
     state: absent
   register: disable_influxdb_auth
-  changed_when: not influxdb_user_password
+  changed_when: 'disable_influxdb_auth.msg == "1 line(s) removed" and not influxdb_user_password'
   notify: restart influxdb
 
 - name: Restart influxdb
