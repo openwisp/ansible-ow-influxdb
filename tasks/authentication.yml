@@ -1,3 +1,5 @@
+---
+
 # Disabling authentication is required for updating user password
 - name: Disable influxdb authentication
   lineinfile:
@@ -7,7 +9,7 @@
       "  # Determines whether user authentication is enabled over HTTP/HTTPS."
     state: absent
   register: disable_influxdb_auth
-  changed_when: not influxdb_user_password
+  changed_when: 'disable_influxdb_auth.msg == "1 line(s) removed" and not influxdb_user_password'
   notify: restart influxdb
 
 - name: Restart influxdb
@@ -49,4 +51,12 @@
   when: influxdb_user_password
   register: enable_influxdb_auth
   changed_when: |
-    "changed" in enable_influxdb_auth and "changed" not in disable_influxdb_auth
+    enable_influxdb_auth.msg == "1 line(s) added" and disable_influxdb_auth.changed is false
+
+# Restarting influxdb is required after enabling authentication
+- name: Restart influxdb
+  service:
+    name: influxdb
+    state: restarted
+  when: enable_influxdb_auth
+  changed_when: false

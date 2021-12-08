@@ -1,0 +1,60 @@
+---
+
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: |
+  set -e
+  yamllint . || true
+  ansible-lint || true
+platforms:
+  - name: "openwisp2-influxdb-ubuntu2004"
+    image: "geerlingguy/docker-ubuntu2004-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+  - name: "openwisp2-influxdb-ubuntu1804"
+    image: "geerlingguy/docker-ubuntu1804-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+  - name: "openwisp2-influxdb-debian10"
+    image: "geerlingguy/docker-debian10-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+  - name: "openwisp2-influxdb-debian11"
+    image: "geerlingguy/docker-debian11-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  env:
+    MOLECULE_NO_LOG: false
+  playbooks:
+    converge: ../resources/${MOLECULE_PLAYBOOK:-converge.yml}
+    verify: ../resources/verify.yml
+  config_options:
+    defaults:
+      stdout_callback: yaml
+      bin_ansible_callbacks: true
+  inventory:
+    host_vars:
+      openwisp2-influxdb-ubuntu2004:
+        influxdb_user_username: influx_user
+        influxdb_user_password: influx_password
+      openwisp2-influxdb-debian11:
+        influxdb_user_username: influx_user
+        influxdb_user_password: influx_password
+verifier:
+  name: ansible
