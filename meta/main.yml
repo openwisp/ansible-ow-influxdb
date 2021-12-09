@@ -3,6 +3,8 @@
 dependencies: []
 
 galaxy_info:
+  role_name: ow_influxdb
+  namespace: openwisp
   author: openwisp
   company: OpenWISP
   description: Simple ansible role for installing and configuring influxdb.
@@ -11,7 +13,12 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
-        - all
+        - 18.04
+        - 20.04
+    - name: Debian
+      versions:
+        - 10
+        - 11
   galaxy_tags:
     - system
     - networking

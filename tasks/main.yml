@@ -116,7 +116,7 @@
   service:
     name: influxdb
     state: started
-    enabled: yes
+    enabled: true
   tags: [influxdb]
 
 - import_tasks: authentication.yml

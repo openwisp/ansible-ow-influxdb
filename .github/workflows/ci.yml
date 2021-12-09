@@ -1,0 +1,77 @@
+---
+
+name: Ansible OpenWISP InfluxDB CI Build
+
+on:             # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build ${{ matrix.distro }}
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Below passwords are only meant for testing
+          - distro: ubuntu1804
+            influxdb_user_username: null
+            influxdb_user_password: null
+          - distro: ubuntu2004
+            influxdb_user_username: "openwisp"
+            influxdb_user_password: "uo3ooPoeshoo1Fai6eil5goNg1ohVie"
+          - distro: debian10
+            influxdb_user_username: null
+            influxdb_user_password: null
+          - distro: debian11
+            influxdb_user_username: "openwisp"
+            influxdb_user_password: "uo3ooPoeshoo1Fai6eil5goNg1ohVie"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Set default python version
+        run: sudo update-alternatives --install /usr/bin/python python ${pythonLocation}/bin/python3.8 2
+
+      - name: Install python dependencies
+        run: |
+          pip install molecule[docker,ansible] molecule-docker yamllint ansible-lint docker openwisp-utils[qa]
+      - name: Install Ansible Galaxy dependencies
+        run: ansible-galaxy collection install "community.general:>=3.6.0"
+
+      - name: QA checks
+        run: |
+          openwisp-qa-check --skip-isort --skip-flake8 --skip-checkmigrations --skip-black
+
+      - name: Tests
+        run: molecule test
+        env:
+          ROLE_NAME: ow_influxdb
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ${{ matrix.distro }}
+          INFLUXDB_USER_USERNAME: ${{ matrix.influxdb_user_username }}
+          INFLUXDB_USER_PASSWORD: ${{ matrix.influxdb_user_password }}
+
+  import:
+    name: Update imports on Ansible Galaxy
+    runs-on: ubuntu-20.04
+    container: python:3-slim
+    needs:
+      - build
+
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    steps:
+      - name: Install ansible
+        run: pip install ansible
+
+      # - name: Update imports on Ansible Galaxy
+      #   run: |
+      #     ansible-galaxy role import --api-key "${{ secrets.GITHUB_TOKEN }}" openwisp ansible-openwisp2
