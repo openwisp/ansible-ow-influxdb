@@ -42,7 +42,10 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          pip install molecule[docker,ansible] molecule-docker yamllint ansible-lint docker openwisp-utils[qa]
+          pip install molecule[docker,ansible] molecule-docker yamllint ansible-lint docker openwisp-utils[qa] &&
+          # TODO: Temporary workaround till next version of molecule is released.
+          pip install -U git+https://github.com/ansible-community/molecule.git#4912d697cbec5e6c2896eefb08a25860dea1212e
+
       - name: Install Ansible Galaxy dependencies
         run: ansible-galaxy collection install "community.general:>=3.6.0"
 
