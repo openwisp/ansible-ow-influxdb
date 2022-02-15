@@ -16,12 +16,12 @@
   service:
     name: influxdb
     state: restarted
-  when: influxdb_user_password != ''
+  when: (influxdb_user_password)
   changed_when: false
 
 - name: Wait for influxdb to restart
   pause: seconds=3
-  when: influxdb_user_password != ''
+  when: (influxdb_user_password)
 
 - name: Create influxdb user
   shell:
@@ -30,7 +30,7 @@
           | influx -host {{ influxdb_http_ip }} \
           && touch /etc/influxdb/.admin_created
     creates: /etc/influxdb/.admin_created
-  when: influxdb_user_password != ''
+  when: (influxdb_user_password)
   notify: restart influxdb
 
 - name: Update user password
@@ -38,7 +38,7 @@
     cmd: |
       echo "SET PASSWORD FOR {{ influxdb_user_username }} = '{{ influxdb_user_password }}'" \
         | influx -host {{ influxdb_http_ip }}
-  when: influxdb_user_password != ''
+  when: (influxdb_user_password)
   changed_when: false
   notify: restart influxdb
 
@@ -48,7 +48,7 @@
     line: "  auth-enabled = true"
     insertafter: "  # Determines whether user authentication is enabled over HTTP/HTTPS."
     state: present
-  when: influxdb_user_password != ''
+  when: (influxdb_user_password)
   register: enable_influxdb_auth
   changed_when: |
     enable_influxdb_auth.msg == "1 line(s) added" and disable_influxdb_auth.changed is false
