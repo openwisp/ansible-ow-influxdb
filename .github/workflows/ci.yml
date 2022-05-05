@@ -26,6 +26,9 @@ jobs:
           - distro: ubuntu2004
             influxdb_user_username: "openwisp"
             influxdb_user_password: "uo3ooPoeshoo1Fai6eil5goNg1ohVie"
+          - distro: ubuntu2204
+            influxdb_user_username: null
+            influxdb_user_password: null
           - distro: debian10
             influxdb_user_username: null
             influxdb_user_password: null
