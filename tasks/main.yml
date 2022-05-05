@@ -45,8 +45,9 @@
   tags: [influxdb]
 
 - name: Install influxdb for ubuntu22 (jammy jellyfish)
-  apt:
-    deb: https://launchpad.net/ubuntu/+archive/primary/+files/influxdb_1.6.7~rc0-1_amd64.deb
+  apt_repository:
+    repo: "deb https://repos.influxdata.com/ubuntu focal stable"
+    state: present
   when: 
     - ansible_distribution|string == 'Ubuntu'
     - ansible_distribution_release|string == 'jammy'
