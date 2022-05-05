@@ -40,6 +40,16 @@
   apt_repository:
     repo: "deb https://repos.influxdata.com/{{ ansible_distribution.lower() }}/ {{ ansible_distribution_release  }} stable"
     state: present
+  when: (ansible_distribution|string == 'Ubuntu' and (ansible_distribution_release|string == 'focal' or ansible_distribution_release|string == 'bionic')) or 
+        ansible_distribution|string == 'Debian'
+  tags: [influxdb]
+
+- name: Install influxdb for ubuntu22 (jammy jellyfish)
+  apt:
+    deb: https://launchpad.net/ubuntu/+archive/primary/+files/influxdb_1.6.7~rc0-1_amd64.deb
+  when: 
+    - ansible_distribution|string == 'Ubuntu'
+    - ansible_distribution_release|string == 'jammy'
   tags: [influxdb]
 
 - name: Install influxdb (update apt cache first)

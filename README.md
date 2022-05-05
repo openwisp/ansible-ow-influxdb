@@ -32,6 +32,7 @@ If you haven't installed docker yet, you need to install it (example for Debian/
 
 **Step 4**: Download docker images
 
+    docker pull geerlingguy/docker-ubuntu2204-ansible:latest
     docker pull geerlingguy/docker-ubuntu2004-ansible:latest
     docker pull geerlingguy/docker-ubuntu1804-ansible:latest
     docker pull geerlingguy/docker-debian10-ansible:latest

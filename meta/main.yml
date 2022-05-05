@@ -15,6 +15,7 @@ galaxy_info:
       versions:
         - 18.04
         - 20.04
+        - 22.04
     - name: Debian
       versions:
         - 10
