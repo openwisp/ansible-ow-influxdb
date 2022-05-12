@@ -17,4 +17,4 @@
         state: absent
 
   roles:
-    - role: openwisp.ow_influxdb
+    - role: openwisp.influxdb
