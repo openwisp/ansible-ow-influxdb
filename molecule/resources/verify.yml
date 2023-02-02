@@ -12,8 +12,6 @@
           command: >
             curl -sPOST "http://localhost:8086/query" \
               --data-urlencode 'q=CREATE DATABASE "test"'
-          args:
-            warn: false
           register: auth_error_response
           failed_when: '"unable to parse authentication credentials" not in auth_error_response.stdout'
           changed_when: false
@@ -22,8 +20,6 @@
             curl -sPOST "http://localhost:8086/query" \
               --data-urlencode 'q=CREATE DATABASE "test"'
               -H 'Authorization: Token {{ influxdb_user_username }}:{{ influxdb_user_password }}'
-          args:
-            warn: false
           register: db_created_response
           failed_when: '"results" not in db_created_response.stdout'
           changed_when: false
@@ -34,8 +30,6 @@
         - command: >
             curl -sPOST "http://localhost:8086/query" \
               --data-urlencode 'q=CREATE DATABASE "test"'
-          args:
-            warn: false
           register: db_created_response
           failed_when: '"results" not in db_created_response.stdout'
           changed_when: false
