@@ -65,4 +65,22 @@ influxdb_http_port: 8086
 # https://docs.influxdata.com/influxdb/v1.8/administration/config/#index-version--inmem.
 # Defaults to "inmem" (InfluxDB's default).
 influxdb_index_version: tsi1
+# Whether to configure InfluxDB to accept data over UDP.
+# Defaults to "false".
+influxdb_udp_mode: true
+# When "influxdb_udp_mode" is set to "true", the UDP listeners configured
+# in this setting are added to the InfluxDB configuration.
+# The following is the default value for this setting:
+influxdb_udp_settings: |
+  # For writing data with the "default" retention policy
+  [[udp]]
+  enabled = true
+  bind-address = "{{ influxdb_http_ip }}:8089"
+  database = "openwisp2"
+  # For writing data with the "short" retention policy
+  [[udp]]
+  enabled = true
+  bind-address = "{{ influxdb_http_ip }}:8090"
+  database = "openwisp2"
+  retention-policy = "short"
 ```

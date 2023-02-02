@@ -1,0 +1,23 @@
+- name: Set net.core.rmem_max
+  ansible.posix.sysctl:
+    name: net.core.rmem_max
+    value: 26214400
+    state: present
+    sysctl_set: true
+  tags: [influxdb, sysctl, notest]
+
+- name: Set net.core.rmem_default
+  ansible.posix.sysctl:
+    name: net.core.rmem_default
+    value: 26214400
+    state: present
+    sysctl_set: true
+  tags: [influxdb, sysctl, notest]
+
+- name: Configure influxdb udp settings
+  ansible.builtin.blockinfile:
+    path: /etc/influxdb/influxdb.conf
+    insertafter: "### Controls the listeners for InfluxDB line protocol data via UDP"
+    block: "{{ influxdb_udp_settings }}"
+  notify: restart influxdb
+  tags: [influxdb, influxdb_udp]
