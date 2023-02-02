@@ -32,7 +32,7 @@
 
 - name: Add influxdb key
   apt_key:
-    url: https://repos.influxdata.com/influxdb.key
+    url: https://repos.influxdata.com/influxdata-archive_compat.key
     state: present
   tags: [influxdb]
 
@@ -40,17 +40,6 @@
   apt_repository:
     repo: "deb https://repos.influxdata.com/{{ ansible_distribution.lower() }}/ {{ ansible_distribution_release  }} stable"
     state: present
-  when: (ansible_distribution|string == 'Ubuntu' and (ansible_distribution_release|string == 'focal' or ansible_distribution_release|string == 'bionic')) or 
-        ansible_distribution|string == 'Debian'
-  tags: [influxdb]
-
-- name: Install influxdb for ubuntu22 (jammy jellyfish)
-  apt_repository:
-    repo: "deb https://repos.influxdata.com/ubuntu focal stable"
-    state: present
-  when: 
-    - ansible_distribution|string == 'Ubuntu'
-    - ansible_distribution_release|string == 'jammy'
   tags: [influxdb]
 
 - name: Install influxdb (update apt cache first)
