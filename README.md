@@ -61,4 +61,8 @@ influxdb_user_password: "your-strong-password"
 influxdb_http_ip: "localhost"
 # The port on which InfluxDB server is listening.
 influxdb_http_port: 8086
+# InfluxDB index version, read InfluxDB's documentation for details
+# https://docs.influxdata.com/influxdb/v1.8/administration/config/#index-version--inmem.
+# Defaults to "inmem" (InfluxDB's default).
+influxdb_index_version: tsi1
 ```

@@ -89,6 +89,15 @@
   when: influxdb_query_logging
   tags: [influxdb]
 
+- name: Set the index-version for influxdb
+  lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    insertafter: "  # index-version = \"inmem\""
+    line: "  index-version = \"{{ influxdb_index_version }}\""
+    search_string: "  index-version ="
+  notify: restart influxdb
+  tags: [influxdb]
+
 - name: Set maxsize of rsyslog logrotate configuration
   block:
     - lineinfile:
