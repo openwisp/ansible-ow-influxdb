@@ -5,5 +5,18 @@ influxdb_http_port: 8086
 influxdb_query_logging: false
 influxdb_user_username: admin
 influxdb_index_version: inmem
+influxdb_udp_mode: false
+influxdb_udp_settings: |
+  # For writing data with the "default" retention policy
+  [[udp]]
+  enabled = true
+  bind-address = "{{ influxdb_http_ip }}:8089"
+  database = "openwisp2"
+  # For writing data with the "short" retention policy
+  [[udp]]
+  enabled = true
+  bind-address = "{{ influxdb_http_ip }}:8090"
+  database = "openwisp2"
+  retention-policy = "short"
 # For backward compatibility
 influxdb_user_password: "{{ inflxudb_admin_password | default(None) }}"

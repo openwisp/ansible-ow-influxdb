@@ -130,3 +130,7 @@
 
 - import_tasks: authentication.yml
   tags: [influxdb]
+
+- import_tasks: udp_mode.yml
+  when: influxdb_udp_mode
+  tags: [influxdb]

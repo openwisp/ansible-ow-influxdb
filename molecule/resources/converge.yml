@@ -3,18 +3,17 @@
 - name: Converge
   hosts: all
   become: true
-
+  vars:
+    influxdb_udp_mode: true
   pre_tasks:
     - name: Update apt cache
       apt:
         update_cache: true
         cache_valid_time: 600
       when: ansible_os_family == 'Debian'
-
     - name: Remove the .dockerenv file
       file:
         path: /.dockerenv
         state: absent
-
   roles:
     - role: openwisp.influxdb
