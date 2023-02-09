@@ -1,5 +1,11 @@
 ---
 
+- name: Remove the old InfluxDB key
+  apt_key:
+    url: https://repos.influxdata.com/influxdb.key
+    state: absent
+  tags: [influxdb]
+
 - name: Install gpg (update apt cache first)
   apt:
     name: gpg
