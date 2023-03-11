@@ -37,6 +37,7 @@ If you haven't installed docker yet, you need to install it (example for Debian/
     docker pull geerlingguy/docker-ubuntu1804-ansible:latest
     docker pull geerlingguy/docker-debian10-ansible:latest
     docker pull geerlingguy/docker-debian11-ansible:latest
+    docker pull geerlingguy/docker-centos8-ansible:latest
 
 **Step 5**: Run molecule test
 

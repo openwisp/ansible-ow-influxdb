@@ -1,0 +1,51 @@
+---
+
+- name: Install gpg (update apt cache first)
+  apt:
+    name: gpg
+    cache_valid_time: 3000
+    state: latest
+  tags: [influxdb]
+
+- name: Install gpg-agent (update apt cache first)
+  apt:
+    name: gpg-agent
+    cache_valid_time: 3000
+    state: latest
+  tags: [influxdb]
+
+- name: Install logrotate
+  apt:
+    name: logrotate
+    cache_valid_time: 3000
+    state: latest
+  tags: [influxdb]
+
+- name: Install system dependencies
+  apt:
+    name:
+      - curl
+      - rsyslog
+    cache_valid_time: 3000
+    state: latest
+  tags: [influxdb]
+
+- name: Add influxdb key
+  apt_key:
+    url: https://repos.influxdata.com/influxdata-archive_compat.key
+    state: present
+  tags: [influxdb]
+
+- name: Add influxdb repo
+  apt_repository:
+    repo: "deb https://repos.influxdata.com/{{ ansible_distribution.lower() }}/ {{ ansible_distribution_release  }} stable"
+    state: present
+  tags: [influxdb]
+
+- name: Install influxdb (update apt cache first)
+  apt:
+    name: influxdb
+    state: latest
+  notify: restart influxdb
+  tags: [influxdb]
+
