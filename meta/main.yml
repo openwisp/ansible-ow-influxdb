@@ -20,6 +20,14 @@ galaxy_info:
       versions:
         - 10
         - 11
+    - name: RedHat
+      versions:
+        - 8
+        - 9
+    - name: CentOS
+      versions:
+        - 8
+        - 9
   galaxy_tags:
     - system
     - networking

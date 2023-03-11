@@ -1,0 +1,45 @@
+---
+
+- name: Install logrotate
+  dnf:
+    name: logrotate
+    state: latest
+  tags: [influxdb]
+
+- name: Install system dependencies
+  dnf:
+    name:
+      - curl
+      - rsyslog
+    state: latest
+  tags: [influxdb]
+
+- name: Add influxdb repo (RHEL)
+  ansible.builtin.yum_repository:
+    name: influxdb
+    description: InfluxData Repository - Stable
+    baseurl: "https://repos.influxdata.com/rhel/{{ ansible_distribution_major_version }}/x86_64/stable/"
+    enabled: yes
+    gpgcheck: true
+    gpgkey: https://repos.influxdata.com/influxdata-archive_compat.key
+  tags: [influxdb]
+  when: ansible_distribution == 'RedHat'
+
+- name: Add influxdb repo (CentOS)
+  ansible.builtin.yum_repository:
+    name: influxdb
+    description: InfluxData Repository - Stable
+    baseurl: "https://repos.influxdata.com/centos/{{ ansible_distribution_major_version }}/x86_64/stable/"
+    enabled: yes
+    gpgcheck: true
+    gpgkey: https://repos.influxdata.com/influxdata-archive_compat.key
+  tags: [influxdb]
+  when: ansible_distribution == 'CentOS'
+
+- name: Install influxdb
+  dnf:
+    name: influxdb
+    state: latest
+  notify: restart influxdb
+  tags: [influxdb]
+
