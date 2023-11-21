@@ -38,7 +38,7 @@
 
 - name: Add influxdb repo
   apt_repository:
-    repo: "deb https://repos.influxdata.com/{{ ansible_distribution.lower() }}/ {{ ansible_distribution_release  }} stable"
+    repo: "deb https://repos.influxdata.com/{{ ansible_distribution.lower() }} stable main"
     state: present
   tags: [influxdb]
 
