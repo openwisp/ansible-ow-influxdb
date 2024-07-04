@@ -9,16 +9,16 @@ galaxy_info:
   company: OpenWISP
   description: Simple ansible role for installing and configuring influxdb.
   license:
-  min_ansible_version: 2.7
+  min_ansible_version: 2.13
   platforms:
     - name: Ubuntu
       versions:
-        - 18.04
-        - 20.04
+        - 24.04
         - 22.04
+        - 20.04
     - name: Debian
       versions:
-        - 10
+        - 12
         - 11
   galaxy_tags:
     - system

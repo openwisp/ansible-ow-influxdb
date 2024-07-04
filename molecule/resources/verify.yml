@@ -18,12 +18,12 @@
         - name: Test creating database with authentication credentials
           command: >
             curl -sPOST "http://localhost:8086/query" \
-              --data-urlencode 'q=CREATE DATABASE "test"'
+              --data-urlencode 'q=CREATE DATABASE "test"' \
               -H 'Authorization: Token {{ influxdb_user_username }}:{{ influxdb_user_password }}'
           register: db_created_response
           failed_when: '"results" not in db_created_response.stdout'
           changed_when: false
-      when: influxdb_user_password
+      when: influxdb_user_password is defined and influxdb_user_password
 
     - name: Test influxdb authentication disabled
       block:
@@ -33,4 +33,4 @@
           register: db_created_response
           failed_when: '"results" not in db_created_response.stdout'
           changed_when: false
-      when: not influxdb_user_password
+      when: influxdb_user_password is not defined or not influxdb_user_password
