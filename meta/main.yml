@@ -7,7 +7,7 @@ galaxy_info:
   namespace: openwisp
   author: openwisp
   company: OpenWISP
-  description: Simple ansible role for installing and configuring influxdb.
+  description: Simple ansible role for installing and configuring InfluxDB 1.8.
   license:
   min_ansible_version: 2.13
   platforms:

@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/openwisp/ansible-ow-influxdb/workflows/Ansible%20OpenWISP%20InfluxDB%20CI%20Build/badge.svg?branch=master)](https://github.com/openwisp/ansible-openwisp2/actions?query=workflow%3A%22Ansible+OpenWISP+Infl+CI+Build%22)
 
-Simple ansible role for installing and configuring influxdb.
+Simple ansible role for installing and configuring InfluxDB 1.8.
 
 Designed to be used in OpenWISP installations.
 
