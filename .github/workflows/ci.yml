@@ -13,25 +13,21 @@ on:             # yamllint disable-line rule:truthy
 jobs:
   build:
     name: Build ${{ matrix.distro }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
       matrix:
         include:
           # Below passwords are only meant for testing
-          - distro: ubuntu1804
+          - distro: ubuntu2404
+          - distro: ubuntu2204
             influxdb_user_username: null
             influxdb_user_password: null
           - distro: ubuntu2004
             influxdb_user_username: "openwisp"
             influxdb_user_password: "uo3ooPoeshoo1Fai6eil5goNg1ohVie"
-          - distro: ubuntu2204
-            influxdb_user_username: null
-            influxdb_user_password: null
-          - distro: debian10
-            influxdb_user_username: null
-            influxdb_user_password: null
+          - distro: debian12
           - distro: debian11
             influxdb_user_username: "openwisp"
             influxdb_user_password: "uo3ooPoeshoo1Fai6eil5goNg1ohVie"
@@ -43,7 +39,7 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.12
 
       - name: Install python dependencies
         run: |
@@ -78,6 +74,6 @@ jobs:
       - name: Install ansible
         run: pip install ansible
 
-      # - name: Update imports on Ansible Galaxy
-      #   run: |
-      #     ansible-galaxy role import --api-key "${{ secrets.GITHUB_TOKEN }}" openwisp ansible-openwisp2
+      - name: Update imports on Ansible Galaxy
+        run: |
+           ansible-galaxy role import --api-key ${{ secrets.GALAXY_API_KEY }} openwisp influxdb

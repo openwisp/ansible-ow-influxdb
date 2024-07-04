@@ -31,14 +31,16 @@
   tags: [influxdb]
 
 - name: Add influxdb key
-  apt_key:
-    url: https://repos.influxdata.com/influxdata-archive_compat.key
-    state: present
-  tags: [influxdb]
+  shell: |
+    curl -s https://repos.influxdata.com/influxdata-archive_compat.key -o influxdata-archive_compat.key
+    echo '393e8779c89ac8d958f81f942f9ad7fb82a25e133faddaf92e15b16e6ac9ce4c influxdata-archive_compat.key' | sha256sum -c && cat influxdata-archive_compat.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg > /dev/null
+  tags:
+    - influxdb
+    - molecule-idempotence-notest
 
 - name: Add influxdb repo
   apt_repository:
-    repo: "deb https://repos.influxdata.com/{{ ansible_distribution.lower() }} stable main"
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg] https://repos.influxdata.com/{{ ansible_distribution.lower() }} stable main"
     state: present
   tags: [influxdb]
 
