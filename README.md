@@ -1,6 +1,6 @@
 # ansible-ow-influxdb
 
-[![Build Status](https://github.com/openwisp/ansible-ow-influxdb/workflows/Ansible%20OpenWISP%20InfluxDB%20CI%20Build/badge.svg?branch=master)](https://github.com/openwisp/ansible-openwisp2/actions?query=workflow%3A%22Ansible+OpenWISP+Infl+CI+Build%22)
+[![Ansible OpenWISP InfluxDB CI Build](https://github.com/openwisp/ansible-ow-influxdb/actions/workflows/ci.yml/badge.svg)](https://github.com/openwisp/ansible-ow-influxdb/actions/workflows/ci.yml)
 
 Simple ansible role for installing and configuring InfluxDB 1.8.
 
