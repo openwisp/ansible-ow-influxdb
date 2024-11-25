@@ -49,12 +49,22 @@
     state: present
   tags: [influxdb]
 
-- name: Install influxdb (update apt cache first)
+- name: Install influxdb 1.11.7-1
   apt:
     name: "influxdb=1.11.7-1"
     state: latest
   notify: restart influxdb
-  tags: [influxdb]
+  tags:
+    - influxdb
+    - molecule-idempotence-notest
+
+- name: Upgrade InfluxDB to the latest version
+  apt:
+    name: influxdb
+    state: latest
+  notify: restart influxdb
+  tags:
+    - influxdb
 
 - name: Set influxdb HTTP IP and port
   lineinfile:
