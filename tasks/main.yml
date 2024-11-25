@@ -25,6 +25,7 @@
   apt:
     name:
       - rsyslog
+      - curl
     cache_valid_time: 3000
     state: latest
   tags: [influxdb]
