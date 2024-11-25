@@ -25,6 +25,7 @@
   apt:
     name:
       - rsyslog
+      - curl
     cache_valid_time: 3000
     state: latest
   tags: [influxdb]
@@ -50,7 +51,7 @@
 
 - name: Install influxdb (update apt cache first)
   apt:
-    name: influxdb
+    name: "influxdb=1.11.7-1"
     state: latest
   notify: restart influxdb
   tags: [influxdb]
