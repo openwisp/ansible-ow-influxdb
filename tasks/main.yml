@@ -51,7 +51,7 @@
 
 - name: Install influxdb (update apt cache first)
   apt:
-    name: "influxdb=1.11.7-1"
+    name: influxdb
     state: latest
   notify: restart influxdb
   tags: [influxdb]
