@@ -19,4 +19,4 @@ influxdb_udp_settings: |
   database = "openwisp2"
   retention-policy = "short"
 # For backward compatibility
-influxdb_user_password: "{{ inflxudb_admin_password | default(None) }}"
+influxdb_user_password: "{{ influxdb_admin_password | default(None) }}"
