@@ -22,7 +22,7 @@
           register: db_created_response
           failed_when: '"results" not in db_created_response.stdout'
           changed_when: false
-      when: influxdb_user_password is defined and influxdb_user_password
+      when: influxdb_user_password is defined and influxdb_user_password | bool
 
     - name: Test influxdb authentication disabled
       block:
@@ -32,4 +32,4 @@
           register: db_created_response
           failed_when: '"results" not in db_created_response.stdout'
           changed_when: false
-      when: influxdb_user_password is not defined or not influxdb_user_password
+      when: influxdb_user_password is not defined or not influxdb_user_password | bool
