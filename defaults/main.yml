@@ -1,5 +1,4 @@
 ---
-
 influxdb_http_ip: "localhost"
 influxdb_http_port: 8086
 influxdb_query_logging: false

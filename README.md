@@ -6,8 +6,7 @@ Simple ansible role for installing and configuring InfluxDB 1.8.
 
 Designed to be used in OpenWISP installations.
 
-How to run tests
-----------------
+## How to run tests
 
 If you want to contribute to `ansible-ow-influxdb` you should run tests
 in your development environment to ensure your changes are not breaking anything.
@@ -28,7 +27,7 @@ If you haven't installed docker yet, you need to install it (example for Debian/
 
 **Step 3**: Install molecule and dependencies
 
-    pip install molecule[docker] yamllint ansible-lint docker
+    pip install -r requirements-test.txt
 
 **Step 4**: Download docker images
 
@@ -46,8 +45,7 @@ If you don't get any error message it means that the tests ran successfully with
 
 **ProTip:** Use `molecule test --destroy=never` to speed up subsequent test runs.
 
-Role Variables
-==============
+## Role Variables
 
 ```yaml
 # By default query logging of InfluxDB is turned off since it can occupy a

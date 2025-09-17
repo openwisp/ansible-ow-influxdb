@@ -1,5 +1,4 @@
 ---
-
 # Disabling authentication is required for updating user password
 - name: Disable influxdb authentication
   lineinfile:

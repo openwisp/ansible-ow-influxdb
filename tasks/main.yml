@@ -1,5 +1,4 @@
 ---
-
 - name: Install gpg (update apt cache first)
   apt:
     name: gpg
@@ -70,12 +69,12 @@
   block:
     - lineinfile:
         path: /etc/influxdb/influxdb.conf
-        line: '  log-enabled = false'
+        line: "  log-enabled = false"
         insertafter: '\[http\]'
         state: present
     - lineinfile:
         path: /etc/influxdb/influxdb.conf
-        line: '  query-log-enabled = false'
+        line: "  query-log-enabled = false"
         insertafter: '\[data\]'
         state: present
   when: not influxdb_query_logging
@@ -85,12 +84,12 @@
   block:
     - lineinfile:
         path: /etc/influxdb/influxdb.conf
-        line: '  log-enabled = false'
+        line: "  log-enabled = false"
         insertafter: '\[http\]'
         state: absent
     - lineinfile:
         path: /etc/influxdb/influxdb.conf
-        line: '  query-log-enabled = false'
+        line: "  query-log-enabled = false"
         insertafter: '\[data\]'
         state: absent
   when: influxdb_query_logging
@@ -99,8 +98,8 @@
 - name: Set the index-version for influxdb
   lineinfile:
     path: /etc/influxdb/influxdb.conf
-    insertafter: "  # index-version = \"inmem\""
-    line: "  index-version = \"{{ influxdb_index_version }}\""
+    insertafter: '  # index-version = "inmem"'
+    line: '  index-version = "{{ influxdb_index_version }}"'
     search_string: "  index-version ="
   notify: restart influxdb
   tags: [influxdb]
@@ -110,12 +109,12 @@
     - lineinfile:
         path: /etc/logrotate.d/rsyslog
         firstmatch: false
-        line: '        maxsize 65M'
+        line: "        maxsize 65M"
         insertafter: '\{'
     - lineinfile:
         path: /etc/logrotate.d/rsyslog
         firstmatch: true
-        line: '        maxsize 65M'
+        line: "        maxsize 65M"
         insertafter: '\{'
   tags: [influxdb]
 
