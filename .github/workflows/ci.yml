@@ -13,7 +13,7 @@ on:             # yamllint disable-line rule:truthy
 jobs:
   build:
     name: Build ${{ matrix.distro }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     strategy:
       fail-fast: false
@@ -43,14 +43,14 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          pip install molecule[docker,ansible] molecule-docker yamllint ansible-lint docker openwisp-utils[qa]~=1.0
+          pip install -r requirements-test.txt
 
       - name: Install Ansible Galaxy dependencies
         run: ansible-galaxy collection install "community.general:>=3.6.0"
 
       - name: QA checks
         run: |
-          openwisp-qa-check --skip-isort --skip-flake8 --skip-checkmigrations --skip-black
+          ./run-qa-checks
 
       - name: Tests
         run: molecule test

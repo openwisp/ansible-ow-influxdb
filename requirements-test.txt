@@ -1,0 +1,5 @@
+molecule[docker,ansible]
+molecule-plugins[docker]
+yamllint
+ansible-lint
+openwisp-utils[qa]~=1.1.2
