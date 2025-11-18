@@ -24,14 +24,6 @@ platforms:
     cgroupns_mode: host
     privileged: true
     pre_build_image: true
-  - name: "openwisp2-influxdb-ubuntu2004"
-    image: "geerlingguy/docker-ubuntu2004-ansible:latest"
-    command: ${MOLECULE_DOCKER_COMMAND:-""}
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    cgroupns_mode: host
-    privileged: true
-    pre_build_image: true
   - name: "openwisp2-influxdb-debian11"
     image: "geerlingguy/docker-debian11-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
@@ -48,6 +40,14 @@ platforms:
     cgroupns_mode: host
     privileged: true
     pre_build_image: true
+  - name: "openwisp2-influxdb-debian13"
+    image: "geerlingguy/docker-debian13-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
 provisioner:
   name: ansible
   env:
@@ -57,15 +57,9 @@ provisioner:
     verify: ../resources/verify.yml
   config_options:
     defaults:
-      stdout_callback: yaml
+      stdout_callback: default
       bin_ansible_callbacks: true
-  inventory:
-    host_vars:
-      openwisp2-influxdb-ubuntu2004:
-        influxdb_user_username: influx_user
-        influxdb_user_password: influx_password
-      openwisp2-influxdb-debian11:
-        influxdb_user_username: influx_user
-        influxdb_user_password: influx_password
+    default:
+      result_format: yaml
 verifier:
   name: ansible
