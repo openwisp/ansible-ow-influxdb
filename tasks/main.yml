@@ -32,7 +32,7 @@
 - name: Add InfluxData key
   get_url:
     url: https://repos.influxdata.com/influxdata-archive.key
-    dest: /usr/share/keyrings/influxdata-archive.gpg
+    dest: /tmp/influxdata-key-ascii
     checksum: sha256:943666881a1b8d9b849b74caebf02d3465d6beb716510d86a39f6c8e8dac7515
     mode: '0644'
   retries: 5
@@ -42,11 +42,16 @@
   tags:
     - influxdb
 
-- name: Add influxdb repo
+- name: Convert key to binary format
+  shell: cat /tmp/influxdata-key-ascii | gpg --dearmor > /etc/apt/trusted.gpg.d/influxdata-archive.gpg
+  args:
+    creates: /etc/apt/trusted.gpg.d/influxdata-archive.gpg
+
+- name: Add InfluxData repository
   apt_repository:
-    repo: "deb [signed-by=/usr/share/keyrings/influxdata-archive.gpg] https://repos.influxdata.com/{{ ansible_distribution.lower() }} stable main"
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive.gpg] https://repos.influxdata.com/debian stable main"
+    filename: influxdata
     state: present
-  tags: [influxdb]
 
 - name: Install influxdb (update apt cache first)
   apt:
