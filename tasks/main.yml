@@ -34,7 +34,7 @@
     url: https://repos.influxdata.com/influxdata-archive.key
     dest: /tmp/influxdata-key-ascii
     checksum: sha256:943666881a1b8d9b849b74caebf02d3465d6beb716510d86a39f6c8e8dac7515
-    mode: '0644'
+    mode: "0644"
   retries: 5
   delay: 10
   register: result
