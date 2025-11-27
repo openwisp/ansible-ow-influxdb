@@ -23,13 +23,11 @@ jobs:
           - distro: ubuntu2204
             influxdb_user_username: null
             influxdb_user_password: null
-          - distro: ubuntu2004
-            influxdb_user_username: "openwisp"
-            influxdb_user_password: "uo3ooPoeshoo1Fai6eil5goNg1ohVie"
           - distro: debian12
           - distro: debian11
             influxdb_user_username: "openwisp"
             influxdb_user_password: "uo3ooPoeshoo1Fai6eil5goNg1ohVie"
+          - distro: debian13
     steps:
       - uses: actions/checkout@v2
         with:
