@@ -45,7 +45,6 @@
   shell: gpg --dearmor < /tmp/influxdata-key-ascii > /usr/share/keyrings/influxdata-archive.gpg
   args:
     creates: /usr/share/keyrings/influxdata-archive.gpg
-  when: not influxdb_binary_key.stat.exists
   tags: [influxdb]
 
 - name: Add InfluxData repository
