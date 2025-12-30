@@ -42,14 +42,14 @@
   tags: [influxdb]
 
 - name: Convert key to binary format
-  shell: cat /tmp/influxdata-key-ascii | gpg --dearmor > /etc/apt/trusted.gpg.d/influxdata-archive.gpg
+  shell: gpg --dearmor < /tmp/influxdata-key-ascii > /usr/share/keyrings/influxdata-archive.gpg
   args:
-    creates: /etc/apt/trusted.gpg.d/influxdata-archive.gpg
+    creates: /usr/share/keyrings/influxdata-archive.gpg
   tags: [influxdb]
 
 - name: Add InfluxData repository
   apt_repository:
-    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive.gpg] https://repos.influxdata.com/debian stable main"
+    repo: "deb [signed-by=/usr/share/keyrings/influxdata-archive.gpg] https://repos.influxdata.com/debian stable main"
     filename: influxdata
     state: present
   tags: [influxdb]
