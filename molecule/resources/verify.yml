@@ -33,3 +33,35 @@
           failed_when: '"results" not in db_created_response.stdout'
           changed_when: false
       when: influxdb_user_password is not defined or not influxdb_user_password | bool
+
+    - name: Test influxdb data directory configuration
+      block:
+        - name: Read InfluxDB configuration file
+          slurp:
+            src: /etc/influxdb/influxdb.conf
+          register: influxdb_config_content
+
+        - name: Test default data directory when variable not changed
+          block:
+            - name: Read InfluxDB configuration file
+              slurp:
+                src: /etc/influxdb/influxdb.conf
+              register: influxdb_config_content
+
+            - name: Verify default data directory is present
+              assert:
+                that:
+                  - "'/var/lib/influxdb' in (influxdb_config_content.content | b64decode)"
+                fail_msg: "InfluxDB should use default /var/lib/influxdb when influxdb_data_dir is not defined or unchanged"
+                success_msg: "InfluxDB correctly using default data directory /var/lib/influxdb"
+          when: influxdb_data_dir is not defined or influxdb_data_dir == '/var/lib/influxdb'
+
+        - name: Verify data directory has been updated in configuration
+          assert:
+            that:
+              - influxdb_data_dir is defined
+              - "'/var/lib/influxdb' not in (influxdb_config_content.content | b64decode)"
+              - "influxdb_data_dir in (influxdb_config_content.content | b64decode)"
+            fail_msg: "InfluxDB configuration should use {{ influxdb_data_dir | default('/var/lib/influxdb') }} instead of default /var/lib/influxdb"
+            success_msg: "InfluxDB data directory correctly configured as {{ influxdb_data_dir | default('/var/lib/influxdb') }}"
+          when: influxdb_data_dir is defined and influxdb_data_dir != '/var/lib/influxdb'

@@ -81,4 +81,7 @@ influxdb_udp_settings: |
   bind-address = "{{ influxdb_http_ip }}:8090"
   database = "openwisp2"
   retention-policy = "short"
+# When "influxdb_data_dir" is set to a path different from the default
+# (/var/lib/influxdb), InfluxDB will store its data in the specified directory.
+influxdb_data_dir: "/opt/influxdb"
 ```
