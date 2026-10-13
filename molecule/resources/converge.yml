@@ -5,6 +5,56 @@
   vars:
     influxdb_udp_mode: true
   pre_tasks:
+    # Detect snapshot date from commented snapshot lines in sources files (first match wins)
+    - name: Find snapshot date in commented /etc/apt sources
+      become: true
+      ansible.builtin.shell: |
+        # Use -h to suppress filename prefixes in grep output
+        grep -h -oP '^\s*#\s*deb\s+https?://snapshot\.debian\.org/archive/debian/\K[0-9]{8}T[0-9]{6}Z' /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null | head -n1 || true
+      register: snapshot_date_search
+      changed_when: false
+      failed_when: false
+      when:
+        - ansible_distribution == 'Debian'
+        - ansible_distribution_major_version == '11'
+      tags: [ influxdb, debian, debug ]
+    - name: Set debian_snapshot_date from sources if present
+      ansible.builtin.set_fact:
+        debian_snapshot_date: "{{ snapshot_date_search.stdout }}"
+      when:
+        - snapshot_date_search.stdout is defined
+        - snapshot_date_search.stdout | length > 0
+      tags: [ influxdb, debian, debug ]
+    # Set variable `debian_snapshot_date` (e.g. "20260824T000000Z") when you want to use snapshot.debian.org.
+    - name: Configure bullseye snapshot sources
+      become: true
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/bullseye-snapshot.list
+        content: |
+          deb http://snapshot.debian.org/archive/debian/{{ debian_snapshot_date }} bullseye main
+          deb http://snapshot.debian.org/archive/debian-security/{{ debian_snapshot_date }} bullseye-security main
+          deb http://snapshot.debian.org/archive/debian/{{ debian_snapshot_date }} bullseye-updates main
+        owner: root
+        group: root
+        mode: '0644'
+      when:
+        - ansible_distribution == 'Debian'
+        - ansible_distribution_major_version == '11'
+        - debian_snapshot_date is defined and debian_snapshot_date|length > 0
+      tags: [ influxdb, debian ]
+    # Ensure Debian 11 (bullseye) can use snapshot/archive repos and ignore expired Release
+    - name: Ensure apt ignores Release expiration (Debian 11)
+      become: true
+      ansible.builtin.copy:
+        dest: /etc/apt/apt.conf.d/99ignore-expiration
+        content: 'Acquire::Check-Valid-Until "false";'
+        owner: root
+        group: root
+        mode: '0644'
+      when:
+        - ansible_distribution == 'Debian'
+        - ansible_distribution_major_version == '11'
+      tags: [ influxdb, debian ]
     - name: Update apt cache
       apt:
         update_cache: true
