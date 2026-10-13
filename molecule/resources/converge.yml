@@ -10,7 +10,7 @@
       become: true
       ansible.builtin.shell: |
         # Use -h to suppress filename prefixes in grep output
-        grep -h -m1 -oP 'snapshot.debian.org/archive/debian/\K[0-9]{8}T[0-9]{6}Z' /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null || true
+        grep -h -oP '^\s*#\s*deb\s+https?://snapshot\.debian\.org/archive/debian/\K[0-9]{8}T[0-9]{6}Z' /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null | head -n1 || true
       register: snapshot_date_search
       changed_when: false
       failed_when: false
