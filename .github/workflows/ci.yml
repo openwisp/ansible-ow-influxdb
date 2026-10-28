@@ -9,10 +9,16 @@ on: # yamllint disable-line rule:truthy
     branches:
       - master
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build ${{ matrix.distro }}
     runs-on: ubuntu-24.04
+    concurrency:
+      group: ci-build-${{ github.repository }}-${{ github.event.pull_request.number || github.run_id }}-${{ matrix.distro }}
+      cancel-in-progress: true
 
     strategy:
       fail-fast: false
@@ -28,20 +34,23 @@ jobs:
             influxdb_user_password: "uo3ooPoeshoo1Fai6eil5goNg1ohVie"
           - distro: debian13
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - name: Set up Python 3.12
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: 3.12
 
       - name: Install python dependencies
+        id: deps
         run: |
           pip install -r requirements-test.txt
 
       - name: Install Ansible Galaxy dependencies
+        id: galaxy
         run: ansible-galaxy collection install "community.general:>=3.6.0"
 
       - name: QA checks
@@ -49,6 +58,7 @@ jobs:
           ./run-qa-checks
 
       - name: Tests
+        if: ${{ !cancelled() && steps.deps.conclusion == 'success' && steps.galaxy.conclusion == 'success' }}
         run: molecule test
         env:
           ROLE_NAME: ow_influxdb
@@ -60,16 +70,26 @@ jobs:
 
   import:
     name: Update imports on Ansible Galaxy
+    environment: ansible-galaxy
+    concurrency:
+      group: galaxy-import-${{ github.repository }}-${{ github.run_id }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
-    container: python:3-slim
     needs:
       - build
 
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     steps:
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+
       - name: Install ansible
         run: pip install ansible
 
       - name: Update imports on Ansible Galaxy
         run: |
-          ansible-galaxy role import --api-key ${{ secrets.GALAXY_API_KEY }} --role-name influxdb openwisp ansible-ow-influxdb
+          ansible-galaxy role import --api-key "$GALAXY_API_KEY" --role-name influxdb openwisp ansible-ow-influxdb
+        env:
+          GALAXY_API_KEY: ${{ secrets.GALAXY_API_KEY }}
