@@ -6,6 +6,8 @@ Simple ansible role for installing and configuring InfluxDB 1.8.
 
 Designed to be used in OpenWISP installations.
 
+Tested on **Debian (13/12)** and **Ubuntu (24.04/22.04 LTS)**.
+
 ## How to run tests
 
 If you want to contribute to `ansible-ow-influxdb` you should run tests
@@ -33,9 +35,8 @@ If you haven't installed docker yet, you need to install it (example for Debian/
 
     docker pull geerlingguy/docker-ubuntu2404-ansible:latest
     docker pull geerlingguy/docker-ubuntu2204-ansible:latest
-    docker pull geerlingguy/docker-ubuntu2004-ansible:latest
     docker pull geerlingguy/docker-debian12-ansible:latest
-    docker pull geerlingguy/docker-debian11-ansible:latest
+    docker pull geerlingguy/docker-debian13-ansible:latest
 
 **Step 5**: Run molecule test
 
