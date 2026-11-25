@@ -1,0 +1,97 @@
+---
+- name: Read InfluxDB process before repeating the role
+  command: systemctl show influxdb --property=MainPID --value
+  register: influxdb_pid_before
+  changed_when: false
+
+- name: Apply the role again with unchanged credentials
+  include_role:
+    name: openwisp.influxdb
+  vars:
+    influxdb_udp_mode: true
+
+- name: Run pending handlers before checking the process
+  meta: flush_handlers
+
+- name: Read InfluxDB process after repeating the role
+  command: systemctl show influxdb --property=MainPID --value
+  register: influxdb_pid_after
+  changed_when: false
+
+- name: Check unchanged credentials do not restart InfluxDB
+  assert:
+    that:
+      - influxdb_pid_before.stdout != '0'
+      - influxdb_pid_before.stdout == influxdb_pid_after.stdout
+
+- name: Save the original test password
+  set_fact:
+    influxdb_test_password: "{{ influxdb_user_password }}"
+  no_log: true
+
+- name: Change the influxdb password
+  include_role:
+    name: openwisp.influxdb
+  vars:
+    influxdb_udp_mode: true
+    influxdb_user_password: "{{ influxdb_test_password }}-changed"
+
+- name: Run handlers after changing the password
+  meta: flush_handlers
+
+- name: Check the new password works
+  uri:
+    url: "http://localhost:8086/query?q=SHOW%20USERS"
+    url_username: "{{ influxdb_user_username }}"
+    url_password: "{{ influxdb_test_password }}-changed"
+    force_basic_auth: true
+    status_code: 200
+  no_log: true
+
+- name: Check the old password is rejected
+  uri:
+    url: "http://localhost:8086/query?q=SHOW%20USERS"
+    url_username: "{{ influxdb_user_username }}"
+    url_password: "{{ influxdb_test_password }}"
+    force_basic_auth: true
+    status_code: 401
+  no_log: true
+
+- name: Disable authentication without removing the existing user
+  include_role:
+    name: openwisp.influxdb
+  vars:
+    influxdb_udp_mode: true
+    influxdb_user_password: ""
+
+- name: Run handlers after disabling authentication
+  meta: flush_handlers
+
+- name: Check unauthenticated requests now succeed
+  uri:
+    url: "http://localhost:8086/query?q=SHOW%20USERS"
+    status_code: 200
+
+- name: Restore authentication and the original password
+  include_role:
+    name: openwisp.influxdb
+  vars:
+    influxdb_udp_mode: true
+    influxdb_user_password: "{{ influxdb_test_password }}"
+
+- name: Run handlers after restoring authentication
+  meta: flush_handlers
+
+- name: Check the original password works again
+  uri:
+    url: "http://localhost:8086/query?q=SHOW%20USERS"
+    url_username: "{{ influxdb_user_username }}"
+    url_password: "{{ influxdb_test_password }}"
+    force_basic_auth: true
+    status_code: 200
+  no_log: true
+
+- name: Check unauthenticated requests are rejected again
+  uri:
+    url: "http://localhost:8086/query?q=SHOW%20USERS"
+    status_code: 401
