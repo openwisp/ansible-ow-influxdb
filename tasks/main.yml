@@ -140,6 +140,10 @@
     enabled: true
   tags: [influxdb]
 
+- import_tasks: data_dir.yml
+  when: influxdb_data_dir is defined and influxdb_data_dir != '/var/lib/influxdb'
+  tags: [influxdb]
+
 - import_tasks: authentication.yml
   tags: [influxdb]
 

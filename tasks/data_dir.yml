@@ -1,0 +1,56 @@
+---
+- name: Stop influxdb service
+  service:
+    name: influxdb
+    state: stopped
+  tags: [ influxdb ]
+
+- name: Create influxdb data directory if it does not exist
+  file:
+    path: "{{ influxdb_data_dir }}"
+    state: directory
+    owner: influxdb
+    group: influxdb
+  tags: [ influxdb ]
+
+- name: Update influxdb meta directory
+  ansible.builtin.lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    regexp: '^\s*dir\s*=\s*".*/meta"'
+    line: '  dir = "{{ influxdb_data_dir }}/meta"'
+    insertafter: '\[meta\]'
+  notify: restart influxdb
+  tags: [ influxdb ]
+
+- name: Update influxdb data directory
+  ansible.builtin.lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    regexp: '^\s*dir\s*=\s*".*/data"'
+    line: '  dir = "{{ influxdb_data_dir }}/data"'
+    insertafter: '\[data\]'
+  notify: restart influxdb
+  tags: [ influxdb ]
+
+- name: Update influxdb wal directory
+  ansible.builtin.lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    regexp: '^\s*wal-dir\s*=\s*".*/wal"'
+    line: '  wal-dir = "{{ influxdb_data_dir }}/wal"'
+    insertafter: '\[data\]'
+  notify: restart influxdb
+  tags: [ influxdb ]
+
+- name: Start influxdb service
+  service:
+    name: influxdb
+    state: started
+  tags: [ influxdb ]
+
+- name: Set influxdb dir permissions
+  file:
+    path: "{{ influxdb_data_dir }}"
+    state: directory
+    owner: influxdb
+    group: influxdb
+    recurse: true
+  tags: [ influxdb ]
